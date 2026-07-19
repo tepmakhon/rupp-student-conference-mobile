@@ -87,3 +87,39 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+
+  # Routing
+  go_router: ^16.0.0
+
+  # HTTP Client
+  dio: ^5.9.0
+
+  # Local Storage
+  shared_preferences: ^2.5.3
+
+  # Secure Token Storage
+  flutter_secure_storage: ^9.2.4
+
+  # JSON
+  json_annotation: ^4.9.0
+
+  # Loading Animation
+  flutter_spinkit: ^5.2.1
+
+  # SVG Support
+  flutter_svg: ^2.2.0
+
+  # Cached Images
+  cached_network_image: ^3.4.1
+
+  # Date Formatting
+  intl: ^0.20.2

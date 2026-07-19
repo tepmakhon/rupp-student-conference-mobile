@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/widgets/app_logo.dart';
+import '../../../core/widgets/app_text_field.dart';
+import '../../../core/widgets/primary_button.dart';
+import '../../../core/constants/app_colors.dart';
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
-
-  static const primary = Color(0xFF0F4C3A);
-  static const gold = Color(0xFFD4AF37);
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +19,9 @@ class LoginScreen extends StatelessWidget {
 
           child: Column(
             children: [
-
               const SizedBox(height: 70),
 
-              Icon(
-                Icons.school_rounded,
-                size: 80,
-                color: primary,
-              ),
+              const AppLogo(),
 
               const SizedBox(height: 30),
 
@@ -33,7 +30,7 @@ class LoginScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
-                  color: primary,
+                  color: AppColors.primary,
                 ),
               ),
 
@@ -42,34 +39,24 @@ class LoginScreen extends StatelessWidget {
               const Text(
                 "Continue your learning journey",
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: AppColors.textSecondary,
                   fontSize: 16,
                 ),
               ),
 
               const SizedBox(height: 45),
 
-              TextField(
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  prefixIcon: Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
+              const AppTextField(
+                label: "Email",
+                icon: Icons.email_outlined,
               ),
 
               const SizedBox(height: 20),
 
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  prefixIcon: Icon(Icons.lock_outline),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
+              const AppTextField(
+                label: "Password",
+                icon: Icons.lock_outline,
+                obscure: true,
               ),
 
               const SizedBox(height: 10),
@@ -84,24 +71,11 @@ class LoginScreen extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    "Continue",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
+              PrimaryButton(
+                text: "Continue",
+                onPressed: () {
+                  // TODO: Login
+                },
               ),
 
               const SizedBox(height: 35),
@@ -109,24 +83,27 @@ class LoginScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
                   const Text(
                     "Don't have an account?",
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
 
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // TODO: Navigate Register
+                    },
                     child: const Text(
                       "Create Account",
                       style: TextStyle(
-                        color: gold,
+                        color: AppColors.accent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
