@@ -1,31 +1,19 @@
 import 'package:flutter/material.dart';
-
+// import 'features/splash/presentation/splash_screen.dart';
+import 'features/auth/presentation/login_screen.dart';
 void main() {
-  runApp(const RuppConferenceApp());
+  runApp(const RUPPConferenceApp());
 }
 
-class RuppConferenceApp extends StatelessWidget {
-  const RuppConferenceApp({super.key});
+class RUPPConferenceApp extends StatelessWidget {
+  const RUPPConferenceApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'RUPP Student Conference',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'RUPP Student Conference',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
+      title: 'RUPP Student Conference',
+      home: const LoginScreen(),
     );
   }
 }
