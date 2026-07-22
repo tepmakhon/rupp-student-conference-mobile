@@ -1,3 +1,4 @@
 class ApiConstants {
-  static const baseUrl = "http://localhost:5000/api";
+  static const String baseUrl =
+      "http://localhost:5050/api";
 }
