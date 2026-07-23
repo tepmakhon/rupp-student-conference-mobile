@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../../../core/storage/token_storage.dart';
 import '../repositories/auth_repository.dart';
 import 'auth_state.dart';
 
@@ -27,9 +27,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
         password,
       );
 
-      print(response.token);
+      await TokenStorage.saveToken(response.token);
 
-      print(response.user);
+      state = state.copyWith(
+        status: AuthStatus.authenticated,
+      );
 
       state = state.copyWith(
         status: AuthStatus.authenticated,
