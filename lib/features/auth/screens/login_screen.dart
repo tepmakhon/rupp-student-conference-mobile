@@ -31,7 +31,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(authProvider);
+    ref.listen(authProvider, (previous, next) {
+      if (next.status == AuthStatus.authenticated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Login Successful"),
+          ),
+        );
 
+        // TODO
+        // Navigate to Dashboard
+      }
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

@@ -1,19 +1,20 @@
+import 'user_model.dart';
+
 class LoginResponse {
   final String token;
+  final UserModel user;
 
-  final Map<String, dynamic> user;
-
-  LoginResponse({
+  const LoginResponse({
     required this.token,
     required this.user,
   });
 
-  factory LoginResponse.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    final data = json["data"];
+
     return LoginResponse(
-      token: json["token"],
-      user: json["user"],
+      token: data["token"],
+      user: UserModel.fromJson(data["user"]),
     );
   }
 }
