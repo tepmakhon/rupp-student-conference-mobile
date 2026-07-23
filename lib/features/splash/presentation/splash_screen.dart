@@ -1,65 +1,63 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_colors.dart';
+
+import '../controller/splash_controller.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() =>
+      _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState
+    extends State<SplashScreen> {
+
   @override
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 3), () {
-      // TODO: Navigate to Login Screen
-    });
+    SplashController.initialize(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.school_rounded,
-                size: 90,
-                color: Color(0xFF0F4C3A),
+      backgroundColor: AppColors.primary,
+
+      body: Center(
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+
+          children: [
+
+            const Icon(
+              Icons.school_rounded,
+              color: Colors.white,
+              size: 90,
+            ),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              "RUPP Student Conference",
+
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
+            ),
 
-              SizedBox(height: 24),
+            const SizedBox(height: 10),
 
-              Text(
-                "RUPP Student Conference",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF0F4C3A),
-                ),
-              ),
-
-              SizedBox(height: 12),
-
-              Text(
-                "Conference • Scholarship • Internship",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-
-              SizedBox(height: 40),
-
-              CircularProgressIndicator(
-                color: Color(0xFFD4AF37),
-              ),
-            ],
-          ),
+            const CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          ],
         ),
       ),
     );
