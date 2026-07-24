@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../providers/auth_state.dart';
-
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/buttons/primary_button.dart';
 import '../../../core/widgets/textfields/app_text_field.dart';
@@ -33,14 +33,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final state = ref.watch(authProvider);
     ref.listen(authProvider, (previous, next) {
       if (next.status == AuthStatus.authenticated) {
+        context.go("/dashboard");
+      }
+
+      if (next.status == AuthStatus.error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Login Successful"),
+          SnackBar(
+            content: Text(next.error ?? "Login failed"),
           ),
         );
-
-        // TODO
-        // Navigate to Dashboard
       }
     });
     return Scaffold(
