@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rupp_student_conference_mobile/features/events/providers/event_provider.dart';
 
 import '../../profile/providers/profile_provider.dart';
 import '../../profile/providers/profile_state.dart';
+
+import '../widgets/greeting_card.dart';
+import '../widgets/search_bar_widget.dart';
+import '../widgets/section_title.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -14,11 +19,13 @@ class DashboardScreen extends ConsumerStatefulWidget {
 
 class _DashboardScreenState
     extends ConsumerState<DashboardScreen> {
-
   @override
   void initState() {
     super.initState();
-
+    Future.microtask(() {
+      ref.read(profileProvider.notifier).loadProfile();
+      ref.read(eventProvider.notifier).loadEvents();
+    });
     Future.microtask(() {
       ref.read(profileProvider.notifier).loadProfile();
     });
@@ -30,7 +37,7 @@ class _DashboardScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Dashboard"),
+        title: const Text("Home"),
       ),
       body: Builder(
         builder: (_) {
@@ -53,71 +60,100 @@ class _DashboardScreenState
               return SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
 
-                    /// Welcome Card
+                    GreetingCard(
+                      fullName: profile.fullName,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    const SearchBarWidget(),
+
+                    const SizedBox(height: 32),
+
+                    const SectionTitle(
+                      title: "Upcoming Events",
+                    ),
+
+                    const SizedBox(height: 16),
+
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade700,
-                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.grey.shade300,
+                        ),
                       ),
-                      child: Column(
+                      child: const Column(
                         crossAxisAlignment:
                             CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            "Welcome Back 👋",
+
+                          Text(
+                            "No upcoming events yet",
                             style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
+                              fontSize: 18,
+                              fontWeight:
+                                  FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 8),
+
+                          SizedBox(height: 8),
+
                           Text(
-                            profile.fullName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 26,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            "Events from the backend will appear here.",
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 32),
 
-                    /// Profile Image
-                    Center(
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(
-                          profile.profileImageUrl,
+                    const SectionTitle(
+                      title: "Opportunities",
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.grey.shade300,
                         ),
                       ),
-                    ),
+                      child: const Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                        children: [
 
-                    const SizedBox(height: 30),
+                          Text(
+                            "No opportunities yet",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight:
+                                  FontWeight.bold,
+                            ),
+                          ),
 
-                    _profileItem(
-                      Icons.phone,
-                      "Phone",
-                      profile.phoneNumber,
-                    ),
+                          SizedBox(height: 8),
 
-                    _profileItem(
-                      Icons.person,
-                      "Gender",
-                      profile.gender,
-                    ),
-
-                    _profileItem(
-                      Icons.work,
-                      "Bio",
-                      profile.bio,
+                          Text(
+                            "Scholarships, internships and competitions will appear here.",
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -127,48 +163,6 @@ class _DashboardScreenState
               return const SizedBox();
           }
         },
-      ),
-    );
-  }
-
-  Widget _profileItem(
-    IconData icon,
-    String title,
-    String value,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 18),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: Colors.green,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 17,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
