@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rupp_student_conference_mobile/features/events/providers/event_provider.dart';
+import 'package:intl/intl.dart';
 
+import '../../events/providers/event_provider.dart';
+import '../../events/providers/event_state.dart';
 import '../../profile/providers/profile_provider.dart';
 import '../../profile/providers/profile_state.dart';
 
 import '../widgets/greeting_card.dart';
 import '../widgets/search_bar_widget.dart';
 import '../widgets/section_title.dart';
+import '../../events/widgets/event_card.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -22,18 +25,17 @@ class _DashboardScreenState
   @override
   void initState() {
     super.initState();
+
     Future.microtask(() {
       ref.read(profileProvider.notifier).loadProfile();
       ref.read(eventProvider.notifier).loadEvents();
-    });
-    Future.microtask(() {
-      ref.read(profileProvider.notifier).loadProfile();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(profileProvider);
+    final profileState = ref.watch(profileProvider);
+    final eventState = ref.watch(eventProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,7 +43,7 @@ class _DashboardScreenState
       ),
       body: Builder(
         builder: (_) {
-          switch (state.status) {
+          switch (profileState.status) {
             case ProfileStatus.loading:
               return const Center(
                 child: CircularProgressIndicator(),
@@ -50,112 +52,146 @@ class _DashboardScreenState
             case ProfileStatus.error:
               return Center(
                 child: Text(
-                  state.error ?? "Something went wrong",
+                  profileState.error ??
+                      "Something went wrong",
                 ),
               );
 
             case ProfileStatus.loaded:
-              final profile = state.profile!;
+              final profile = profileState.profile!;
 
-              return SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                  children: [
+              return RefreshIndicator(
+                onRefresh: () async {
+                  await ref
+                      .read(profileProvider.notifier)
+                      .loadProfile();
 
-                    GreetingCard(
-                      fullName: profile.fullName,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    const SearchBarWidget(),
-
-                    const SizedBox(height: 32),
-
-                    const SectionTitle(
-                      title: "Upcoming Events",
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                        ),
+                  await ref
+                      .read(eventProvider.notifier)
+                      .loadEvents();
+                },
+                child: SingleChildScrollView(
+                  physics:
+                      const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                    children: [
+                      GreetingCard(
+                        fullName: profile.fullName,
                       ),
-                      child: const Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                        children: [
 
-                          Text(
-                            "No upcoming events yet",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
+                      const SizedBox(height: 24),
+
+                      const SearchBarWidget(),
+
+                      const SizedBox(height: 32),
+
+                      const SectionTitle(
+                        title: "Upcoming Events",
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      if (eventState.status ==
+                          EventStatus.loading)
+                        const Center(
+                          child:
+                              CircularProgressIndicator(),
+                        )
+                      else if (eventState.status ==
+                          EventStatus.error)
+                        Center(
+                          child: Text(
+                            eventState.error ??
+                                "Failed to load events",
+                          ),
+                        )
+                      else if (eventState.events.isEmpty)
+                        Container(
+                          width: double.infinity,
+                          padding:
+                              const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                BorderRadius.circular(
+                                    16),
+                            border: Border.all(
+                              color:
+                                  Colors.grey.shade300,
                             ),
                           ),
-
-                          SizedBox(height: 8),
-
-                          Text(
-                            "Events from the backend will appear here.",
+                          child: const Text(
+                            "No upcoming events.",
                           ),
-                        ],
+                        )
+                      else
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics:
+                              const NeverScrollableScrollPhysics(),
+                          itemCount:
+                              eventState.events.length,
+                          itemBuilder:
+                              (context, index) {
+                            final event =
+                                eventState.events[index];
+
+                            return EventCard(
+                              event: event,
+                                onTap: () {
+                                  // TODO:
+                                  // Navigate to Event Detail
+                                },
+                            );
+                          },
+                        ),
+
+                      const SizedBox(height: 32),
+
+                      const SectionTitle(
+                        title: "Opportunities",
                       ),
-                    ),
 
-                    const SizedBox(height: 32),
+                      const SizedBox(height: 16),
 
-                    const SectionTitle(
-                      title: "Opportunities",
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                            BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Colors.grey.shade300,
+                      Container(
+                        width: double.infinity,
+                        padding:
+                            const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.circular(
+                                  16),
+                          border: Border.all(
+                            color:
+                                Colors.grey.shade300,
+                          ),
+                        ),
+                        child: const Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "No opportunities yet",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight:
+                                    FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Scholarships, internships and competitions will appear here.",
+                            ),
+                          ],
                         ),
                       ),
-                      child: const Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                        children: [
-
-                          Text(
-                            "No opportunities yet",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-
-                          SizedBox(height: 8),
-
-                          Text(
-                            "Scholarships, internships and competitions will appear here.",
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
 
