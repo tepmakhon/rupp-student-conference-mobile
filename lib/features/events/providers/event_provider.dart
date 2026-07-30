@@ -1,22 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../services/event_service.dart';
+import '../repository/event_repository.dart';
 import 'event_state.dart';
 
 final eventProvider =
-    StateNotifierProvider<
-        EventNotifier,
-        EventState>((ref) {
-  return EventNotifier();
-});
+    StateNotifierProvider<EventNotifier, EventState>(
+  (ref) => EventNotifier(),
+);
 
-class EventNotifier
-    extends StateNotifier<EventState> {
-  EventNotifier()
-      : super(const EventState());
+class EventNotifier extends StateNotifier<EventState> {
+  EventNotifier() : super(const EventState());
 
-  final EventService _service =
-      EventService();
+  final EventRepository _repository =
+      EventRepository();
 
   Future<void> loadEvents() async {
     try {
@@ -25,7 +21,7 @@ class EventNotifier
       );
 
       final events =
-          await _service.getApprovedEvents();
+          await _repository.getApprovedEvents();
 
       state = state.copyWith(
         status: EventStatus.loaded,
