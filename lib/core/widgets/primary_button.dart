@@ -32,9 +32,7 @@ class PrimaryButton extends StatelessWidget {
         ),
 
         child: loading
-            ? const CircularProgressIndicator(
-                color: Colors.white,
-              )
+            ? const CircularProgressIndicator(color: Colors.white)
             : Text(
                 text,
                 style: const TextStyle(

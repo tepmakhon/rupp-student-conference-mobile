@@ -9,10 +9,7 @@ class AuthService {
   final Dio _dio = DioClient.dio;
 
   Future<LoginResponse> login(LoginRequest request) async {
-    final response = await _dio.post(
-      "/auth/login",
-      data: request.toJson(),
-    );
+    final response = await _dio.post("/auth/login", data: request.toJson());
 
     return LoginResponse.fromJson(response.data);
   }

@@ -1,11 +1,6 @@
 import '../models/event_model.dart';
 
-enum EventStatus {
-  initial,
-  loading,
-  loaded,
-  error,
-}
+enum EventStatus { initial, loading, loaded, error }
 
 class EventState {
   final EventStatus status;

@@ -26,15 +26,11 @@ class AppTextField extends StatelessWidget {
 
         prefixIcon: Icon(icon),
 
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            width: 2,
-          ),
+          borderSide: const BorderSide(width: 2),
         ),
       ),
     );

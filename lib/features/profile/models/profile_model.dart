@@ -20,6 +20,7 @@ class ProfileModel {
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
+    json = (json["profile"] as Map<String, dynamic>?) ?? json;
     return ProfileModel(
       id: json["id"].toString(),
       userId: json["userId"].toString(),

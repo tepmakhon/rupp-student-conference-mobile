@@ -5,10 +5,7 @@ import '../../../core/constants/app_colors.dart';
 class GreetingCard extends StatelessWidget {
   final String fullName;
 
-  const GreetingCard({
-    super.key,
-    required this.fullName,
-  });
+  const GreetingCard({super.key, required this.fullName});
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +20,12 @@ class GreetingCard extends StatelessWidget {
       ),
 
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-
           const Text(
-            "Welcome Back 👋",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-            ),
+            "Welcome back",
+            style: TextStyle(color: Colors.white70, fontSize: 16),
           ),
 
           const SizedBox(height: 8),
@@ -51,9 +43,7 @@ class GreetingCard extends StatelessWidget {
 
           const Text(
             "Ready for today's opportunities?",
-            style: TextStyle(
-              color: Colors.white70,
-            ),
+            style: TextStyle(color: Colors.white70),
           ),
         ],
       ),

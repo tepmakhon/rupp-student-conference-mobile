@@ -6,11 +6,7 @@ class AppTitle extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  const AppTitle({
-    super.key,
-    required this.title,
-    required this.subtitle,
-  });
+  const AppTitle({super.key, required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +27,7 @@ class AppTitle extends StatelessWidget {
         Text(
           subtitle,
 
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 16,
-          ),
+          style: const TextStyle(color: Colors.grey, fontSize: 16),
         ),
       ],
     );

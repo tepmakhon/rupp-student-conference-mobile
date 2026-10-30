@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/routes/app_router.dart';
 import 'core/theme/app_theme.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: "RUPP Student Conference",
-
-      debugShowCheckedModeBanner: false,
-
-      theme: AppTheme.lightTheme,
-
-      routerConfig: appRouter,
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => MaterialApp.router(
+    title: 'RUPP Connect',
+    debugShowCheckedModeBanner: false,
+    theme: AppTheme.lightTheme,
+    routerConfig: ref.watch(routerProvider),
+  );
 }

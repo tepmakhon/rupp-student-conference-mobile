@@ -8,11 +8,7 @@ class EventCard extends StatelessWidget {
   final EventModel event;
   final VoidCallback? onTap;
 
-  const EventCard({
-    super.key,
-    required this.event,
-    this.onTap,
-  });
+  const EventCard({super.key, required this.event, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -22,86 +18,61 @@ class EventCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20),
       elevation: 3,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       child: InkWell(
         onTap: onTap,
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               height: 180,
               width: double.infinity,
               child: CachedNetworkImage(
-                imageUrl:
-                    event.bannerImageUrl ?? "",
+                imageUrl: event.bannerImageUrl ?? "",
                 fit: BoxFit.cover,
-                placeholder: (_, __) =>
-                    const Center(
-                  child:
-                      CircularProgressIndicator(),
-                ),
-                errorWidget: (_, __, ___) =>
-                    Container(
+                placeholder: (_, _) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (_, _, _) => Container(
                   color: Colors.grey.shade200,
-                  child: const Icon(
-                    Icons.event,
-                    size: 60,
-                  ),
+                  child: const Icon(Icons.event, size: 60),
                 ),
               ),
             ),
 
             Padding(
-              padding:
-                  const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding:
-                            const EdgeInsets
-                                .symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
-                        decoration:
-                            BoxDecoration(
-                          color: Colors.blue
-                              .withValues(alpha: 0.1),
-                          borderRadius:
-                              BorderRadius
-                                  .circular(20),
-                        ),
-                        child: Text(
-                          event.categoryName,
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            fontWeight:
-                                FontWeight.w600,
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            event.categoryName,
+                            style: const TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-
                       const Spacer(),
 
                       if (event.capacity != null)
                         Row(
                           children: [
-                            const Icon(
-                              Icons.people,
-                              size: 18,
-                            ),
-                            const SizedBox(
-                                width: 4),
-                            Text(
-                              "${event.capacity}",
-                            ),
+                            const Icon(Icons.people, size: 18),
+                            const SizedBox(width: 4),
+                            Text("${event.capacity}"),
                           ],
                         ),
                     ],
@@ -111,11 +82,8 @@ class EventCard extends StatelessWidget {
 
                   Text(
                     event.title,
-                    style: theme
-                        .textTheme.titleLarge
-                        ?.copyWith(
-                      fontWeight:
-                          FontWeight.bold,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
 
@@ -123,17 +91,9 @@ class EventCard extends StatelessWidget {
 
                   Row(
                     children: [
-                      const Icon(
-                        Icons.business,
-                        size: 18,
-                        color: Colors.grey,
-                      ),
+                      const Icon(Icons.business, size: 18, color: Colors.grey),
                       const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          event.organizationName,
-                        ),
-                      ),
+                      Expanded(child: Text(event.organizationName)),
                     ],
                   ),
 
@@ -147,11 +107,7 @@ class EventCard extends StatelessWidget {
                         color: Colors.red,
                       ),
                       const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          event.location,
-                        ),
-                      ),
+                      Expanded(child: Text(event.location)),
                     ],
                   ),
 
@@ -168,9 +124,7 @@ class EventCard extends StatelessWidget {
                       Text(
                         DateFormat(
                           "dd MMM yyyy • HH:mm",
-                        ).format(
-                          event.eventDate,
-                        ),
+                        ).format(event.eventDate.toLocal()),
                       ),
                     ],
                   ),

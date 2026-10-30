@@ -1,42 +1,10 @@
 import 'package:dio/dio.dart';
-
-import '../storage/token_storage.dart';
-
-import 'dio_provider.dart';
+import 'dio_client.dart';
 
 class ApiClient {
-  static Future<Response> get(
-    String path,
-  ) async {
-    final token = await TokenStorage.getToken();
-
-    return dio.get(
-      path,
-
-      options: Options(
-        headers: {
-          "Authorization": "Bearer $token",
-        },
-      ),
-    );
-  }
-
-  static Future<Response> post(
+  static Future<Response<dynamic>> get(String path) => DioClient.dio.get(path);
+  static Future<Response<dynamic>> post(
     String path,
     Map<String, dynamic> data,
-  ) async {
-    final token = await TokenStorage.getToken();
-
-    return dio.post(
-      path,
-
-      data: data,
-
-      options: Options(
-        headers: {
-          "Authorization": "Bearer $token",
-        },
-      ),
-    );
-  }
+  ) => DioClient.dio.post(path, data: data);
 }
