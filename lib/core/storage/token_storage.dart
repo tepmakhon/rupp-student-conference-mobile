@@ -6,10 +6,7 @@ class TokenStorage {
   static const _tokenKey = "access_token";
 
   static Future<void> saveToken(String token) async {
-    await _storage.write(
-      key: _tokenKey,
-      value: token,
-    );
+    await _storage.write(key: _tokenKey, value: token);
   }
 
   static Future<String?> getToken() async {

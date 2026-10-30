@@ -1,204 +1,162 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
-
-import '../../events/providers/event_provider.dart';
-import '../../events/providers/event_state.dart';
-import '../../profile/providers/profile_provider.dart';
-import '../../profile/providers/profile_state.dart';
-
+import 'package:go_router/go_router.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../core/widgets/resource_view.dart';
+import '../../catalog/services/student_api.dart';
+import '../../catalog/widgets/content_card.dart';
 import '../widgets/greeting_card.dart';
 import '../widgets/search_bar_widget.dart';
-import '../widgets/section_title.dart';
-import '../../events/widgets/event_card.dart';
 
-class DashboardScreen extends ConsumerStatefulWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
-
   @override
-  ConsumerState<DashboardScreen> createState() =>
-      _DashboardScreenState();
-}
-
-class _DashboardScreenState
-    extends ConsumerState<DashboardScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() {
-      ref.read(profileProvider.notifier).loadProfile();
-      ref.read(eventProvider.notifier).loadEvents();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final profileState = ref.watch(profileProvider);
-    final eventState = ref.watch(eventProvider);
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    Widget section(String title, String path, bool event) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            TextButton(
+              onPressed: () => context.go(event ? '/events' : '/opportunities'),
+              child: const Text('See all'),
+            ),
+          ],
+        ),
+        ResourceView(
+          value: ref.watch(resourceProvider(path)),
+          retry: () => ref.invalidate(resourceProvider(path)),
+          builder: (data) {
+            var items = (data as List).cast<Json>();
+            if (event) {
+              items =
+                  items
+                      .where(
+                        (e) =>
+                            DateTime.tryParse(
+                              textValue(e['eventDate']),
+                            )?.isAfter(DateTime.now()) ??
+                            false,
+                      )
+                      .toList()
+                    ..sort(
+                      (a, b) => textValue(
+                        a['eventDate'],
+                      ).compareTo(textValue(b['eventDate'])),
+                    );
+            }
+            return Column(
+              children: [
+                if (items.isEmpty)
+                  EmptyState(
+                    event
+                        ? 'No upcoming events yet. Check back soon.'
+                        : 'New opportunities will appear here.',
+                  ),
+                ...items.take(3).map((e) => ContentCard(item: e, event: event)),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home"),
+        title: const Text('RUPP CONNECT'),
+        actions: [
+          IconButton(
+            tooltip: 'Notifications',
+            onPressed: () => context.go('/notifications'),
+            icon: SvgPicture.asset(
+              'assets/icons/figma_bell.svg',
+              width: 24,
+              height: 24,
+            ),
+          ),
+        ],
       ),
-      body: Builder(
-        builder: (_) {
-          switch (profileState.status) {
-            case ProfileStatus.loading:
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-
-            case ProfileStatus.error:
-              return Center(
-                child: Text(
-                  profileState.error ??
-                      "Something went wrong",
+      body: SafeArea(
+        top: false,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await refreshResources(ref, [
+              '/profile/me',
+              '/events/approved',
+              '/opportunities',
+            ]);
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(24),
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              ResourceView(
+                value: ref.watch(resourceProvider('/profile/me')),
+                retry: () => ref.invalidate(resourceProvider('/profile/me')),
+                builder: (data) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    GreetingCard(
+                      fullName: textValue(
+                        data['profile']?['fullName'],
+                        'Student',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (data['student']?['major']?['majorName'] != null)
+                      Text(textValue(data['student']['major']['majorName'])),
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 8,
+                      children: [
+                        Text(
+                          '${data['statistics']?['totalRegistrations'] ?? 0} registrations',
+                        ),
+                        Text(
+                          '${data['statistics']?['savedOpportunities'] ?? 0} saved opportunities',
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              );
-
-            case ProfileStatus.loaded:
-              final profile = profileState.profile!;
-
-              return RefreshIndicator(
-                onRefresh: () async {
-                  await ref
-                      .read(profileProvider.notifier)
-                      .loadProfile();
-
-                  await ref
-                      .read(eventProvider.notifier)
-                      .loadEvents();
-                },
-                child: SingleChildScrollView(
-                  physics:
-                      const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                    children: [
-                      GreetingCard(
-                        fullName: profile.fullName,
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      const SearchBarWidget(),
-
-                      const SizedBox(height: 32),
-
-                      const SectionTitle(
-                        title: "Upcoming Events",
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      if (eventState.status ==
-                          EventStatus.loading)
-                        const Center(
-                          child:
-                              CircularProgressIndicator(),
-                        )
-                      else if (eventState.status ==
-                          EventStatus.error)
-                        Center(
-                          child: Text(
-                            eventState.error ??
-                                "Failed to load events",
-                          ),
-                        )
-                      else if (eventState.events.isEmpty)
-                        Container(
-                          width: double.infinity,
-                          padding:
-                              const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.circular(
-                                    16),
-                            border: Border.all(
-                              color:
-                                  Colors.grey.shade300,
-                            ),
-                          ),
-                          child: const Text(
-                            "No upcoming events.",
-                          ),
-                        )
-                      else
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics:
-                              const NeverScrollableScrollPhysics(),
-                          itemCount:
-                              eventState.events.length,
-                          itemBuilder:
-                              (context, index) {
-                            final event =
-                                eventState.events[index];
-
-                            return EventCard(
-                              event: event,
-                                onTap: () {
-                                  // TODO:
-                                  // Navigate to Event Detail
-                                },
-                            );
-                          },
-                        ),
-
-                      const SizedBox(height: 32),
-
-                      const SectionTitle(
-                        title: "Opportunities",
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      Container(
-                        width: double.infinity,
-                        padding:
-                            const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                              BorderRadius.circular(
-                                  16),
-                          border: Border.all(
-                            color:
-                                Colors.grey.shade300,
-                          ),
-                        ),
-                        child: const Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "No opportunities yet",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight:
-                                    FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Scholarships, internships and competitions will appear here.",
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'What will you discover today?',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 16),
+              const SearchBarWidget(),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () => context.go('/events'),
+                    icon: const Icon(Icons.search),
+                    label: const Text('Find events'),
                   ),
-                ),
-              );
-
-            default:
-              return const SizedBox();
-          }
-        },
+                  OutlinedButton(
+                    onPressed: () => context.go('/opportunities'),
+                    child: const Text('Find opportunities'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              section('Upcoming events', '/events/approved', true),
+              section('Opportunities for you', '/opportunities', false),
+            ],
+          ),
+        ),
       ),
     );
   }

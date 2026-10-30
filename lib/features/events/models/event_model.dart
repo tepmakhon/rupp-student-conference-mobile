@@ -30,10 +30,8 @@ class EventModel {
       eventDate: DateTime.parse(json["eventDate"]),
       capacity: json["capacity"],
       bannerImageUrl: json["bannerImageUrl"],
-      organizationName:
-          json["organization"]["organizationName"] ?? "",
-      categoryName:
-          json["category"]["categoryName"] ?? "",
+      organizationName: json["organization"]["organizationName"] ?? "",
+      categoryName: json["category"]["categoryName"] ?? "",
     );
   }
 }

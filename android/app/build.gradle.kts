@@ -7,7 +7,7 @@ plugins {
 android {
     namespace = "com.example.rupp_student_conference_mobile"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = providers.gradleProperty("rupp.ndkVersion").orElse(flutter.ndkVersion).get()
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
